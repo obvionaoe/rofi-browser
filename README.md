@@ -25,7 +25,7 @@ Install using go:
 go install github.com/obvionaoe/rofi-browser
 ```
 
-## Build from source
+### Build from source
 
 To build from source, simply run:
 
