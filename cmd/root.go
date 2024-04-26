@@ -28,10 +28,9 @@ import (
 )
 
 var (
-	browser             string
-	browserProfilesFile string
-	sort                bool
-	rofiCmd             string
+	browser string
+	sort    bool
+	rofiCmd string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -85,6 +84,10 @@ func run(cmd *cobra.Command, args []string) {
 	}
 
 	profilesFile, err := expandTilde(profilesFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	profiles, err := getProfiles(profilesFile)
 	if err != nil {
 		log.Fatal(err)
