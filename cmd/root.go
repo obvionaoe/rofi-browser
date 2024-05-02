@@ -22,15 +22,18 @@ THE SOFTWARE.
 package cmd
 
 import (
+	"cmp"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"slices"
+	"strings"
 )
 
 var (
-	browser string
-	sort    bool
-	rofiCmd string
+	browser      string
+	sortProfiles bool
+	rofiCmd      string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -60,10 +63,10 @@ func init() {
 		"The browser to use",
 	)
 	rootCmd.Flags().BoolVarP(
-		&sort,
+		&sortProfiles,
 		"sort",
 		"s",
-		true,
+		false,
 		"Sort the profiles alphabetically",
 	)
 	rootCmd.Flags().StringVarP(
@@ -91,6 +94,12 @@ func run(cmd *cobra.Command, args []string) {
 	profiles, err := getProfiles(profilesFile)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if sortProfiles {
+		slices.SortFunc(profiles, func(a, b string) int {
+			return cmp.Compare(strings.ToLower(a), strings.ToLower(b))
+		})
 	}
 
 	selectedProfile, err := runRofi(profiles)
