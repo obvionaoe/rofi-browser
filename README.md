@@ -11,7 +11,7 @@ Currently works with Mozilla Firefox and LibreWolf. I'll gladly accept PR's to i
 
 ### Arch Linux (AUR)
 
-Using your favorite AUR helper, install `rofi-browser`.
+Using your favorite AUR helper, install `rofi-browser` or `rofi-browser-bin`.
 
 ### Binaries
 
