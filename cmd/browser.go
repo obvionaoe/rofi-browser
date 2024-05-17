@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/Wing924/shellwords"
 	"gopkg.in/ini.v1"
 	"log"
@@ -11,12 +10,16 @@ import (
 	"syscall"
 )
 
-const args = "--new-instance -P"
+const (
+	commonBrowserArgs    = "--new-instance"
+	profileManagerOption = "Launch Profile Manager"
+	profileManagerArg    = "--ProfileManager"
+	profilePickerArg     = "-P"
+)
 
 func getProfiles(path string) ([]string, error) {
 	cfg, err := ini.Load(path)
 	if err != nil {
-		fmt.Println("test")
 		return nil, err
 	}
 
@@ -32,20 +35,26 @@ func getProfiles(path string) ([]string, error) {
 }
 
 func runBrowser(profile string) {
-	args := strings.Join([]string{args, profile}, " ")
+	var args string
+
+	if profile == profileManagerOption {
+		args = strings.Join([]string{commonBrowserArgs, profileManagerArg}, " ")
+	} else {
+		args = strings.Join([]string{commonBrowserArgs, profilePickerArg, profile}, " ")
+	}
+
 	escapedArgs, err := shellwords.Split(args)
 	if err != nil {
-		return
+		log.Fatal(err)
 	}
 
 	executable, err := exec.LookPath(browser)
 	if err != nil {
-
 		log.Fatal(err)
 	}
+
 	err = syscall.Exec(executable, escapedArgs, os.Environ())
 	if err != nil {
-
 		log.Fatal(err)
 	}
 }

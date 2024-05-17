@@ -23,6 +23,7 @@ package cmd
 
 import (
 	"cmp"
+	"fmt"
 	"github.com/spf13/cobra"
 	"log"
 	"os"
@@ -31,9 +32,10 @@ import (
 )
 
 var (
-	browser      string
-	sortProfiles bool
-	rofiCmd      string
+	browser            string
+	listProfileManager bool
+	sortProfiles       bool
+	rofiCmd            string
 )
 
 // rootCmd represents the base command when called without any subcommands
@@ -63,6 +65,13 @@ func init() {
 		"The browser to use",
 	)
 	rootCmd.Flags().BoolVarP(
+		&listProfileManager,
+		"list-profile-manager",
+		"p",
+		false,
+		"List the ProfileManager as an option",
+	)
+	rootCmd.Flags().BoolVarP(
 		&sortProfiles,
 		"sort",
 		"s",
@@ -79,11 +88,13 @@ func init() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	profilesFile := ""
+	var profilesFile string
 	if browser == "firefox" {
 		profilesFile = "~/.mozilla/firefox/profiles.ini"
-	} else {
+	} else if browser == "librewolf" {
 		profilesFile = "~/.librewolf/profiles.ini"
+	} else {
+		log.Fatal("unsupported browser")
 	}
 
 	profilesFile, err := expandTilde(profilesFile)
@@ -100,6 +111,11 @@ func run(cmd *cobra.Command, args []string) {
 		slices.SortFunc(profiles, func(a, b string) int {
 			return cmp.Compare(strings.ToLower(a), strings.ToLower(b))
 		})
+	}
+
+	if listProfileManager {
+		fmt.Println("true")
+		profiles = append(profiles, profileManagerOption)
 	}
 
 	selectedProfile, err := runRofi(profiles)
